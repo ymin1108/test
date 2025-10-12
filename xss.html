@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>입력값 출력하기</title>
+</head>
+<body>
+
+    <h2>입력값을 아래에 출력합니다</h2>
+
+    <!-- 사용자 입력을 위한 텍스트 필드 -->
+    <input type="text" id="userInput" placeholder="여기에 텍스트를 입력하세요">
+
+    <!-- 클릭 시 입력값을 출력하는 버튼 -->
+    <button onclick="displayInput()">입력값 표시</button>
+
+    <!-- 입력값이 출력될 영역 -->
+    <p><strong>입력된 내용:</strong> <span id="output"></span></p>
+
+    <script>
+        function displayInput() {
+            // 'userInput' ID를 가진 요소(입력 필드)의 값을 가져옵니다.
+            const inputValue = document.getElementById('userInput').value;
+
+            // 'output' ID를 가진 요소(span)에 입력값을 텍스트로 삽입합니다.
+            document.getElementById('output').innerText = inputValue;
+        }
+    </script>
+
+</body>
+</html>
