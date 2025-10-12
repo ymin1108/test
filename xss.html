@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>스크립트 테스트</title>
+    <title>스크립트 실행 테스트</title>
     <style>
-        body {
-            font-family: sans-serif;
-            padding: 20px;
-        }
-        #scriptInput {
+        body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
+        textarea {
             width: 98%;
             height: 150px;
             margin-bottom: 10px;
             font-family: monospace;
+            font-size: 14px;
         }
         #outputArea {
             border: 2px dashed #ccc;
@@ -27,34 +25,54 @@
             border: 1px solid red;
             padding: 10px;
             margin-bottom: 20px;
+            background-color: #ffeeee;
         }
     </style>
 </head>
 <body>
 
-    <h1>HTML/JavaScript 코드 실행기 (로컬 테스트용)</h1>
+    <h1>JavaScript 코드 실행기 (로컬 테스트 전용)</h1>
 
-    <!-- 사용자가 스크립트를 포함한 HTML 코드를 입력하는 영역 -->
-    <textarea id="scriptInput" placeholder="여기에 HTML 또는 <script> 태그를 입력하세요. 예: <img src='x' onerror='alert(\'XSS\')'>"></textarea>
+    <p>
+        This is test.
+    </p>
 
-    <!-- 클릭 시 입력된 코드를 실행하는 버튼 -->
-    <button onclick="executeCode()">코드 실행</button>
+    <!-- 사용자가 스크립트 코드를 입력하는 영역 -->
+    <textarea id="scriptInput" placeholder="여기에 실행할 JavaScript 코드를 입력하세요. 예: alert('스크립트가 실행되었습니다!');"></textarea>
 
-    <h2>실행 결과:</h2>
-    <!-- 입력된 코드가 삽입되고 실행될 영역 -->
-    <div id="outputArea"></div>
+    <button onclick="executeCode()">스크립트 실행</button>
+
+    <h2>실행 로그:</h2>
+    <!-- 코드 실행 기록을 남길 영역 -->
+    <div id="outputArea">스크립트가 실행될 때마다 이곳에 기록됩니다.</div>
 
     <script>
         function executeCode() {
-            // 'scriptInput' ID를 가진 textarea 요소의 값을 가져옵니다.
-            const codeToExecute = document.getElementById('scriptInput').value;
+            const userInput = document.getElementById('scriptInput').value;
+            const outputLog = document.getElementById('outputArea');
 
-            // 'outputArea' ID를 가진 div 요소를 가져옵니다.
-            const outputDiv = document.getElementById('outputArea');
+            // --- 여기가 핵심 부분 ---
+            // 1. 새로운 <script> 엘리먼트를 생성합니다.
+            const script = document.createElement('script');
 
-            // innerHTML을 사용하여 입력된 문자열을 HTML로 해석하여 삽입합니다.
-            // 이 과정에서 <script> 태그가 브라우저에 의해 실행됩니다.
-            outputDiv.innerHTML = codeToExecute;
+            // 2. 생성된 스크립트 엘리먼트의 내용(textContent)으로 사용자 입력값을 넣습니다.
+            //    이렇게 하면 브라우저는 이 내용을 실행 가능한 코드로 인식합니다.
+            script.textContent = userInput;
+
+            // 3. 생성된 스크립트를 문서의 body 끝에 추가합니다.
+            //    DOM에 추가되는 순간 코드가 실행됩니다.
+            document.body.appendChild(script);
+            
+            // 4. 오래된 스크립트 태그가 계속 쌓이는 것을 방지하기 위해 실행 후 바로 제거합니다.
+            //    (코드 실행 자체에는 영향을 주지 않습니다)
+            document.body.removeChild(script);
+
+
+            // 사용자에게 실행되었음을 알려주기 위한 로그
+            const logEntry = document.createElement('p');
+            const sanitizedInput = userInput.replace(/</g, "&lt;").replace(/>/g, "&gt;"); // 로그 표시는 안전하게
+            logEntry.innerHTML = `[${new Date().toLocaleTimeString()}] 실행됨: <code>${sanitizedInput}</code>`;
+            outputLog.appendChild(logEntry);
         }
     </script>
 
