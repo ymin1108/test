@@ -3,28 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>입력값 출력하기</title>
+    <title>스크립트 테스트</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+        #scriptInput {
+            width: 98%;
+            height: 150px;
+            margin-bottom: 10px;
+            font-family: monospace;
+        }
+        #outputArea {
+            border: 2px dashed #ccc;
+            padding: 15px;
+            min-height: 100px;
+            background-color: #f9f9f9;
+        }
+        .warning {
+            color: red;
+            font-weight: bold;
+            border: 1px solid red;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
 
-    <h2>입력값을 아래에 출력합니다</h2>
+    <h1>HTML/JavaScript 코드 실행기 (로컬 테스트용)</h1>
 
-    <!-- 사용자 입력을 위한 텍스트 필드 -->
-    <input type="text" id="userInput" placeholder="여기에 텍스트를 입력하세요">
+    <p class="warning">
+        경고: 이 페이지는 입력된 스크립트를 그대로 실행하므로 보안에 매우 취약합니다. 절대로 실제 서비스에서는 사용하지 마세요.
+    </p>
 
-    <!-- 클릭 시 입력값을 출력하는 버튼 -->
-    <button onclick="displayInput()">입력값 표시</button>
+    <!-- 사용자가 스크립트를 포함한 HTML 코드를 입력하는 영역 -->
+    <textarea id="scriptInput" placeholder="여기에 HTML 또는 <script> 태그를 입력하세요. 예: <img src='x' onerror='alert(\'XSS\')'>"></textarea>
 
-    <!-- 입력값이 출력될 영역 -->
-    <p><strong>입력된 내용:</strong> <span id="output"></span></p>
+    <!-- 클릭 시 입력된 코드를 실행하는 버튼 -->
+    <button onclick="executeCode()">코드 실행</button>
+
+    <h2>실행 결과:</h2>
+    <!-- 입력된 코드가 삽입되고 실행될 영역 -->
+    <div id="outputArea"></div>
 
     <script>
-        function displayInput() {
-            // 'userInput' ID를 가진 요소(입력 필드)의 값을 가져옵니다.
-            const inputValue = document.getElementById('userInput').value;
+        function executeCode() {
+            // 'scriptInput' ID를 가진 textarea 요소의 값을 가져옵니다.
+            const codeToExecute = document.getElementById('scriptInput').value;
 
-            // 'output' ID를 가진 요소(span)에 입력값을 텍스트로 삽입합니다.
-            document.getElementById('output').innerText = inputValue;
+            // 'outputArea' ID를 가진 div 요소를 가져옵니다.
+            const outputDiv = document.getElementById('outputArea');
+
+            // innerHTML을 사용하여 입력된 문자열을 HTML로 해석하여 삽입합니다.
+            // 이 과정에서 <script> 태그가 브라우저에 의해 실행됩니다.
+            outputDiv.innerHTML = codeToExecute;
         }
     </script>
 
